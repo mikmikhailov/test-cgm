@@ -41,8 +41,10 @@ public class StatisticService {
                 }
                 statMap.put(nextChar, stat);
                 i++;
-                if (i<charArray.length){
+                if (i<charArray.length-1){
                     nextChar = charArray[i + 1];
+                }else{
+                    nextChar=0;
                 }
             }
         }
