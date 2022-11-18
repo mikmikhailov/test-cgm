@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.cgm.testcgm.services.StatisticService;
 import ru.cgm.testcgm.stat.CharStatistics;
+import ru.cgm.testcgm.stat.QueriesStatistics;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class StatisticController {
 
     @GetMapping("query-stat")
     @Operation(summary = "статистика по символам в строке")
-    public Map getStatQueries(){
+    public Map<Character, QueriesStatistics> getStatQueries(){
 
         return statisticService.gerQueriesStatistics();
     }
