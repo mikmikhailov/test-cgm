@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class QueriesStatistics {
-    private int totalQueries;
-    private int averageInStrings;
-    private int averageMaxSequence;
+    private float totalQueries;
+    private float averageInStrings;
+    private float averageMaxSequence;
 }

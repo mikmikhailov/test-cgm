@@ -6,14 +6,12 @@ import ru.cgm.testcgm.stat.QueriesStatistics;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class StatisticService {
 
-    private long queryId=0;
-
-    private Map<Long,Map<Character,CharStatistics>> queriesStat=new HashMap<>();
+    private final List <Map<Character,CharStatistics>> statQ = new LinkedList<>();
+    private final Collection<Map<Character,CharStatistics>> queriesStat=Collections.synchronizedCollection(statQ);
 
     public Map<Character, CharStatistics> getCharsStatistics(@NotNull String stringForAnalysis){
         Map<Character,CharStatistics> charStatMap = new HashMap<>();
@@ -22,6 +20,7 @@ public class StatisticService {
         CharStatistics stat = null;
         for(char c:stringForAnalysis.toCharArray()){
             if (prev!=c){
+                maxLen=1;
                 if (stat!=null){
                     charStatMap.put(prev,stat);
                 }
@@ -29,7 +28,6 @@ public class StatisticService {
             }
             if (stat == null) {
                 stat = new CharStatistics(1, 1);
-                maxLen=1;
             } else {
                 stat.setTotalCount(stat.getTotalCount() + 1);
                 if(c==prev){
@@ -43,16 +41,15 @@ public class StatisticService {
 
         }
         charStatMap.put(prev,stat);
-        queriesStat.put(queryId++,charStatMap);
+        queriesStat.add(charStatMap);
         return charStatMap;
     }
 
         public Map<Character, QueriesStatistics> gerQueriesStatistics(){
         Map<Character, QueriesStatistics> totalStat = new HashMap<>();
 
-        for(Long i:queriesStat.keySet())
+        for(Map<Character,CharStatistics> iMap:statQ)
         {
-            Map<Character,CharStatistics> iMap = queriesStat.get(i);
             for(Character iChar:iMap.keySet()){
                 CharStatistics iCharStatistics = iMap.get(iChar);
                 QueriesStatistics stat = totalStat.get(iChar);
@@ -70,8 +67,8 @@ public class StatisticService {
         //Averaging
         for (Character ch:totalStat.keySet()) {
             QueriesStatistics st = totalStat.get(ch);
-            st.setAverageInStrings(st.getAverageInStrings()/queriesStat.size());
-            st.setAverageMaxSequence(st.getAverageMaxSequence()/queriesStat.size());
+            st.setAverageInStrings(st.getAverageInStrings()/st.getTotalQueries());
+            st.setAverageMaxSequence(st.getAverageMaxSequence()/st.getTotalQueries());
             totalStat.put(ch,st);
         }
          return totalStat;
