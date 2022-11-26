@@ -9,9 +9,7 @@ import java.util.*;
 
 @Service
 public class StatisticService {
-
-    private final List <Map<Character,CharStatistics>> statQ = new LinkedList<>();
-    private final Collection<Map<Character,CharStatistics>> queriesStat=Collections.synchronizedCollection(statQ);
+    private final List<Map<Character,CharStatistics>> queriesStat=Collections.synchronizedList(new ArrayList<>());
 
     public Map<Character, CharStatistics> getCharsStatistics(@NotNull String stringForAnalysis){
         Map<Character,CharStatistics> charStatMap = new HashMap<>();
@@ -47,9 +45,11 @@ public class StatisticService {
 
         public Map<Character, QueriesStatistics> gerQueriesStatistics(){
         Map<Character, QueriesStatistics> totalStat = new HashMap<>();
+        Map<Character,CharStatistics> iMap=null;
+        for(int i=0;i<queriesStat.size();i++)
 
-        for(Map<Character,CharStatistics> iMap:statQ)
         {
+            iMap=queriesStat.get(i);
             for(Character iChar:iMap.keySet()){
                 CharStatistics iCharStatistics = iMap.get(iChar);
                 QueriesStatistics stat = totalStat.get(iChar);
